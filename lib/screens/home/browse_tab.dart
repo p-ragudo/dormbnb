@@ -3,7 +3,8 @@ import '../../models/dorm_model.dart';
 // import 'dorm_menu.dart'; // Assume this exists or will be added
 
 class BrowseScreen extends StatefulWidget {
-  const BrowseScreen({super.key});
+  final String? initialCategory;
+  const BrowseScreen({super.key, this.initialCategory});
 
   @override
   State<BrowseScreen> createState() => _BrowseScreenState();
@@ -26,12 +27,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
       description: 'A cozy, safe space located very close to the MSEUF gate.',
       singleRoomPrice: 4500.0,
       doubleRoomPrice: 3000.0,
-      bedSpacePrice: 2000.0,
+      bedSpacePrice: 3500.0,
       securityDeposit: 3000.0,
       numOfBeds: 15,
       rating: 4.8,
       numOfRating: 42,
-      amenities: [DormModel.wifi, DormModel.privateCr, DormModel.cctv],
+      amenities: [DormModel.wifi, DormModel.privateCr, DormModel.cctv, 'Featured'],
       requiredDocs: [DormModel.permit, DormModel.fireSafetyCert],
     ),
     DormModel(
@@ -43,12 +44,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
       description: 'Modern facilities tailored for male students. Quiet environment.',
       singleRoomPrice: 5000.0,
       doubleRoomPrice: 3500.0,
-      bedSpacePrice: 0.0, // No bedspace offered
+      bedSpacePrice: 2800.0,
       securityDeposit: 5000.0,
       numOfBeds: 10,
       rating: 4.7,
       numOfRating: 22,
-      amenities: [DormModel.aircon, DormModel.parking, DormModel.securedGate],
+      amenities: [DormModel.aircon, DormModel.parking, DormModel.securedGate, 'Featured'],
       requiredDocs: [DormModel.leaseAuthority, DormModel.permit],
     ),
     DormModel(
@@ -60,12 +61,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
       description: 'Premium mixed dormitory with high-speed fiber internet.',
       singleRoomPrice: 6000.0,
       doubleRoomPrice: 4000.0,
-      bedSpacePrice: 2500.0,
+      bedSpacePrice: 3500.0,
       securityDeposit: 6000.0,
       numOfBeds: 25,
       rating: 4.9,
       numOfRating: 56,
-      amenities: [DormModel.wifi, DormModel.studyArea, DormModel.hotShower, DormModel.laundryArea],
+      amenities: [DormModel.wifi, DormModel.studyArea, DormModel.hotShower, DormModel.laundryArea, 'Budget Friendly'],
       requiredDocs: [DormModel.permit],
     ),
     DormModel(
@@ -77,12 +78,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
       description: 'Affordable and serene. Perfect for focused studying.',
       singleRoomPrice: 3500.0,
       doubleRoomPrice: 0.0,
-      bedSpacePrice: 1800.0,
+      bedSpacePrice: 2800.0,
       securityDeposit: 2000.0,
       numOfBeds: 12,
       rating: 4.8,
       numOfRating: 12,
-      amenities: [DormModel.sharedKitchen, DormModel.securedGate],
+      amenities: [DormModel.sharedKitchen, DormModel.securedGate, 'Budget Friendly'],
       requiredDocs: [DormModel.fireSafetyCert],
     ),
   ];
@@ -90,7 +91,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialCategory != null) {
+      _selectedCategoryFilter = widget.initialCategory!;
+    }
     _filteredDorms = sampleDorms;
+    _runFilter();
   }
 
   void _runFilter() {
