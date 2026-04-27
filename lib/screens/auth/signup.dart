@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
-import 'signin.dart'; // To navigate to sign in if they already have an account
+import 'signin.dart';
+import '../main_navigator.dart';
+import '../../controller/user_controller.dart';
+
+final TextEditingController fullNameController = TextEditingController();
+final TextEditingController emailController = TextEditingController();
+final TextEditingController passwordController = TextEditingController();
+final TextEditingController confirmPasswordController = TextEditingController();
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -32,8 +39,9 @@ class SignUpScreen extends StatelessWidget {
                 colors: [
                   Colors.white,
                   Colors.white,
-                  Colors.white.withOpacity(0.85),
-                  Colors.white.withOpacity(0.0),
+                  // Updated deprecated withOpacity
+                  Colors.white.withValues(alpha: 0.85),
+                  Colors.white.withValues(alpha: 0.0),
                 ],
                 stops: const [0.0, 0.45, 0.6, 1.0],
               ),
@@ -43,7 +51,7 @@ class SignUpScreen extends StatelessWidget {
           // FOREGROUND CONTENT
           SafeArea(
             child: Center(
-              child: SingleChildScrollView( // Allows scrolling if keyboard pops up
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -100,6 +108,7 @@ class SignUpScreen extends StatelessWidget {
 
                           // FULL NAME FIELD
                           TextField(
+                            controller: fullNameController, // Attached controller
                             decoration: InputDecoration(
                               hintText: 'Full Name',
                               hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
@@ -121,6 +130,7 @@ class SignUpScreen extends StatelessWidget {
 
                           // EMAIL FIELD
                           TextField(
+                            controller: emailController, // Attached controller
                             decoration: InputDecoration(
                               hintText: 'Email',
                               hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
@@ -142,6 +152,7 @@ class SignUpScreen extends StatelessWidget {
 
                           // PASSWORD FIELD
                           TextField(
+                            controller: passwordController, // Attached controller
                             obscureText: true,
                             decoration: InputDecoration(
                               hintText: 'Password',
@@ -165,6 +176,7 @@ class SignUpScreen extends StatelessWidget {
 
                           // CONFIRM PASSWORD FIELD
                           TextField(
+                            controller: confirmPasswordController, // Attached controller
                             obscureText: true,
                             decoration: InputDecoration(
                               hintText: 'Confirm Password',
@@ -190,8 +202,47 @@ class SignUpScreen extends StatelessWidget {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {
-                                // TODO: Hook up AuthService signUp here
+                              onPressed: () async {
+                                // 1. Check if passwords match
+                                if (passwordController.text != confirmPasswordController.text) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Passwords do not match!')),
+                                    );
+                                  }
+                                  return; // Stop the function here
+                                }
+
+                                try {
+                                  // 2. Split the full name into First and Last
+                                  List<String> nameParts = fullNameController.text.trim().split(' ');
+                                  String firstName = nameParts.isNotEmpty ? nameParts.first : '';
+                                  String lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+
+                                  // 3. Send data to your colleague's controller
+                                  await UserController().signUp(
+                                    email: emailController.text.trim(),
+                                    password: passwordController.text.trim(),
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    number: "0000000000", // Dummy number until UI is updated
+                                  );
+
+                                  // 4. Success! Navigate to Home
+                                  if (context.mounted) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const MainNavigator()),
+                                    );
+                                  }
+                                } catch (e) {
+                                  debugPrint("Error in Sign Up: $e");
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Sign up failed: $e')),
+                                    );
+                                  }
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF4A8BFE),
@@ -214,64 +265,6 @@ class SignUpScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
 
-                          // DIVIDER
-                          Row(
-                            children: const [
-                              Expanded(child: Divider(color: Color(0xFFE0E0E0))),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 12.0),
-                                child: Text(
-                                  "or continue with",
-                                  style: TextStyle(fontSize: 10, color: Color(0xFF888888)),
-                                ),
-                              ),
-                              Expanded(child: Divider(color: Color(0xFFE0E0E0))),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-
-                          // GOOGLE BUTTON
-                          SizedBox(
-                            width: double.infinity,
-                            child: OutlinedButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(Icons.g_mobiledata, color: Colors.red, size: 28),
-                              label: const Text(
-                                'Continue with Google',
-                                style: TextStyle(color: Color(0xFF1A1A1A), fontWeight: FontWeight.w600),
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                side: const BorderSide(color: Color(0xFFE0E0E0)),
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-
-                          // APPLE BUTTON
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(Icons.apple, color: Colors.white, size: 24),
-                              label: const Text(
-                                'Continue with Apple',
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2C2C2C),
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -287,7 +280,6 @@ class SignUpScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            // Pop the Sign Up screen off the stack and push the Sign In screen
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(builder: (context) => const SignInScreen()),
