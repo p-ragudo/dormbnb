@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../auth/landing_screen.dart'; // Adjust path if needed
-// We will import the SignIn screen later once we build it!
+import '../auth/landing_screen.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   const RoleSelectionScreen({super.key});
@@ -11,18 +10,15 @@ class RoleSelectionScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // 1. FULL-SCREEN BACKGROUND IMAGE
           SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: Image.asset(
               'lib/assets/images/LandingScreenBackground.png',
               fit: BoxFit.cover,
-              alignment: Alignment.bottomCenter, // Keeps the bed and lamp fully in view
+              alignment: Alignment.bottomCenter,
             ),
           ),
-
-          // 2. WHITE OVERLAY FADE
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -31,17 +27,15 @@ class RoleSelectionScreen extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.white,                  // Solid white at the top
-                  Colors.white,                  // Stays solid white to the middle
-                  Colors.white.withOpacity(0.85), // Starts fading
-                  Colors.white.withOpacity(0.0), // Fully reveals the image at the bottom
+                  Colors.white,
+                  Colors.white,
+                  Colors.white.withValues(alpha: 0.85),
+                  Colors.white.withValues(alpha: 0.0),
                 ],
-                stops: const [0.0, 0.45, 0.6, 1.0], // Controls exactly where the fade happens
+                stops: const [0.0, 0.45, 0.6, 1.0],
               ),
             ),
           ),
-
-          // 3. FOREGROUND CONTENT
           SafeArea(
             child: Center(
               child: Padding(
@@ -49,11 +43,10 @@ class RoleSelectionScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // LOGO & BRANDING
                     Image.asset(
-                      'lib/assets/images/DormBNBLogoDark.png', // Assuming you have a dark version for white backgrounds
+                      'lib/assets/images/DormBNBLogoDark.png',
                       height: 80,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.location_on, size: 80), // Fallback if image name differs
+                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.location_on, size: 80),
                     ),
                     const SizedBox(height: 12),
                     RichText(
@@ -70,8 +63,6 @@ class RoleSelectionScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 32),
-
-                    // TITLE
                     const Text(
                       'Welcome to DormBNB',
                       style: TextStyle(
@@ -82,12 +73,10 @@ class RoleSelectionScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    // GREY SELECTION BOX
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5F5), // Light grey background
+                        color: const Color(0xFFF5F5F5),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Column(
@@ -102,13 +91,11 @@ class RoleSelectionScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-
-                          // DORMER ROLE CARD
                           RoleCard(
                             title: 'Dormer',
                             description: 'Find & book verified dorms near you.',
                             icon: Icons.person_outline,
-                            iconBackgroundColor: const Color(0xFF4A8BFE), // Blue
+                            iconBackgroundColor: const Color(0xFF4A8BFE),
                             onTap: () {
                               Navigator.push(
                                   context,
@@ -117,13 +104,11 @@ class RoleSelectionScreen extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 12),
-
-                          // DORM OWNER ROLE CARD
                           RoleCard(
                             title: 'Dorm Owner',
                             description: 'List your property and manage tenants.',
                             icon: Icons.home_outlined,
-                            iconBackgroundColor: const Color(0xFFFF6B6B), // Red/Orange
+                            iconBackgroundColor: const Color(0xFFFF6B6B),
                             onTap: () {
                               Navigator.push(
                                   context,
@@ -145,7 +130,6 @@ class RoleSelectionScreen extends StatelessWidget {
   }
 }
 
-// Custom Reusable Widget for the Role Cards
 class RoleCard extends StatelessWidget {
   final String title;
   final String description;
@@ -175,12 +159,11 @@ class RoleCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // ICON BOX
             Container(
               height: 56,
               width: 56,
               decoration: BoxDecoration(
-                color: iconBackgroundColor.withOpacity(0.1), // Light transparent background
+                color: iconBackgroundColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -190,8 +173,6 @@ class RoleCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-
-            // TEXT CONTENT
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

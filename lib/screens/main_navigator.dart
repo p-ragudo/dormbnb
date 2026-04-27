@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'home/home_tab.dart';
+import 'home/booking_tab.dart';  // NEW
+import 'home/messages_tab.dart'; // NEW
+import 'home/profile_tab.dart';  // NEW
 
 class MainNavigator extends StatefulWidget {
   const MainNavigator({super.key});
@@ -13,9 +16,9 @@ class _MainNavigatorState extends State<MainNavigator> {
 
   final List<Widget> _tabs = const [
     HomeTab(),
-    SavedTabPlaceholder(),
-    MessagesTabPlaceholder(),
-    ProfileTabPlaceholder(),
+    BookingTab(),
+    MessagesTab(),
+    ProfileTab(),
   ];
 
   @override
