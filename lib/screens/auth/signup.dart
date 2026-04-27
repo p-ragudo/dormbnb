@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'signup.dart'; // We import this so the "Sign Up" button at the bottom works!
+import 'signin.dart'; // To navigate to sign in if they already have an account
 
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +10,7 @@ class SignInScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // 1. FULL-SCREEN BACKGROUND IMAGE
+          // FULL-SCREEN BACKGROUND IMAGE
           SizedBox(
             width: double.infinity,
             height: double.infinity,
@@ -21,7 +21,7 @@ class SignInScreen extends StatelessWidget {
             ),
           ),
 
-          // 2. WHITE OVERLAY FADE
+          // WHITE OVERLAY FADE
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -40,10 +40,10 @@ class SignInScreen extends StatelessWidget {
             ),
           ),
 
-          // 3. FOREGROUND CONTENT
+          // FOREGROUND CONTENT
           SafeArea(
             child: Center(
-              child: SingleChildScrollView(
+              child: SingleChildScrollView( // Allows scrolling if keyboard pops up
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -80,7 +80,7 @@ class SignInScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           const Text(
-                            'Welcome Back!',
+                            'Create Account',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w800,
@@ -90,13 +90,34 @@ class SignInScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           const Text(
-                            'Sign in to your account.',
+                            'Sign up an account.',
                             style: TextStyle(
                               fontSize: 12,
                               color: Color(0xFF666666),
                             ),
                           ),
                           const SizedBox(height: 24),
+
+                          // FULL NAME FIELD
+                          TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Full Name',
+                              hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
+                              prefixIcon: const Icon(Icons.person_outline, color: Color(0xFFAAAAAA)),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
 
                           // EMAIL FIELD
                           TextField(
@@ -140,14 +161,37 @@ class SignInScreen extends StatelessWidget {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 12),
+
+                          // CONFIRM PASSWORD FIELD
+                          TextField(
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              hintText: 'Confirm Password',
+                              hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
+                              prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFFAAAAAA)),
+                              suffixIcon: const Icon(Icons.visibility_off_outlined, color: Color(0xFFAAAAAA)),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 24),
 
-                          // SIGN IN BUTTON
+                          // SIGN UP BUTTON
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {
-                                // TODO: Hook up AuthService signIn here
+                                // TODO: Hook up AuthService signUp here
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF4A8BFE),
@@ -158,7 +202,7 @@ class SignInScreen extends StatelessWidget {
                                 ),
                               ),
                               child: const Text(
-                                'Sign In',
+                                'Sign Up',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -233,23 +277,24 @@ class SignInScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
 
-                    // SIGN UP TEXT (Navigates to SignUpScreen)
+                    // SIGN IN TEXT
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Don't have an account? ",
+                          "Already have an account? ",
                           style: TextStyle(fontSize: 12, color: Color(0xFF888888)),
                         ),
                         GestureDetector(
                           onTap: () {
+                            // Pop the Sign Up screen off the stack and push the Sign In screen
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => SignUpScreen()), // Removed 'const' here too!
+                              MaterialPageRoute(builder: (context) => const SignInScreen()),
                             );
                           },
                           child: const Text(
-                            "Sign Up",
+                            "Sign In",
                             style: TextStyle(
                               fontSize: 12,
                               color: Color(0xFF4A8BFE),
@@ -281,4 +326,3 @@ class SignInScreen extends StatelessWidget {
     );
   }
 }
-// Hi :>
