@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'signup.dart';
 import '../main_navigator.dart';
 import '../../controller/user_controller.dart';
+import '../welcome/role_selection_screen.dart';
 
 final TextEditingController emailController = TextEditingController();
 final TextEditingController passwordController = TextEditingController();
@@ -217,7 +218,7 @@ class SignInScreen extends StatelessWidget {
                           onTap: () {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => SignUpScreen()),
+                              MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
                             );
                           },
                           child: const Text(
