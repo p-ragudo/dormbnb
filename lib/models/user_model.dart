@@ -5,6 +5,8 @@
 
  */
 
+import 'package:dormbnb/models/payment_record_model.dart';
+
 class UserModel {
   final String id;
   final String firstName;
@@ -15,6 +17,8 @@ class UserModel {
   final bool kycVerified;
   final List<String> bookings;
   final List<String> dormsOwned;
+  final List<PaymentRecord> paymentsReceived;
+  final List<PaymentRecord> pendingOrOverdue;
 
   UserModel({
     required this.id,
@@ -22,14 +26,16 @@ class UserModel {
     required this.lastName,
     required this.email,
     required this.number,
-    this.roles = const ['user'],
+    this.roles = const ['dormer'],
     this.kycVerified = false,
     this.bookings = const [],
     this.dormsOwned = const [],
+    this.paymentsReceived = const [],
+    this.pendingOrOverdue = const [],
   });
 
-  static const String user = 'user';
-  static const String landlord = 'landlord';
+  static const String dormer = 'dormer';
+  static const String dormOwner = 'dorm owner';
 
   factory UserModel.fromMap(Map<String, dynamic> map, String documentId) {
     return UserModel(
@@ -42,6 +48,12 @@ class UserModel {
       kycVerified: map['kycVerified'] ?? false,
       bookings: List<String>.from(map['bookings'] ?? []),
       dormsOwned: List<String>.from(map['dormsOwned'] ?? []),
+      paymentsReceived: (map['paymentsReceived'] as List? ?? [])
+          .map((p) => PaymentRecord.fromMap(p as Map<String, dynamic>))
+          .toList(),
+      pendingOrOverdue: (map['pendingOrOverdue'] as List? ?? [])
+          .map((p) => PaymentRecord.fromMap(p as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -55,6 +67,8 @@ class UserModel {
       'kycVerified': kycVerified,
       'bookings': bookings,
       'dormsOwned': dormsOwned,
+      'paymentsReceived': paymentsReceived.map((p) => p.toMap()).toList(),
+      'pendingOrOverdue': pendingOrOverdue.map((p) => p.toMap()).toList(),
     };
   }
 }
