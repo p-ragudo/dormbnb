@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -64,6 +61,16 @@ class DefaultFirebaseOptions {
     projectId: 'dormbnb-3d1db',
     storageBucket: 'dormbnb-3d1db.firebasestorage.app',
     iosBundleId: 'com.example.dormbnb',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDFEz94HKLho0yKkvIrAkDqpqhV9I7ZJJM',
+    appId: '1:413283102750:web:59d8d88f7528fd70ce7e0f',
+    messagingSenderId: '413283102750',
+    projectId: 'dormbnb-3d1db',
+    authDomain: 'dormbnb-3d1db.firebaseapp.com',
+    storageBucket: 'dormbnb-3d1db.firebasestorage.app',
+    measurementId: 'G-C980HY8HL3',
   );
 
 }
