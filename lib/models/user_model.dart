@@ -14,6 +14,7 @@ class UserModel {
   final List<String> roles;
   final bool kycVerified;
   final List<String> bookings;
+  final List<String> dormsOwned;
 
   UserModel({
     required this.id,
@@ -24,7 +25,11 @@ class UserModel {
     this.roles = const ['user'],
     this.kycVerified = false,
     this.bookings = const [],
+    this.dormsOwned = const [],
   });
+
+  static const String user = 'user';
+  static const String landlord = 'landlord';
 
   factory UserModel.fromMap(Map<String, dynamic> map, String documentId) {
     return UserModel(
@@ -36,6 +41,7 @@ class UserModel {
       roles: List<String>.from(map['roles'] ?? []),
       kycVerified: map['kycVerified'] ?? false,
       bookings: List<String>.from(map['bookings'] ?? []),
+      dormsOwned: List<String>.from(map['dormsOwned'] ?? []),
     );
   }
 
@@ -48,6 +54,7 @@ class UserModel {
       'roles': roles,
       'kycVerified': kycVerified,
       'bookings': bookings,
+      'dormsOwned': dormsOwned,
     };
   }
 }
