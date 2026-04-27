@@ -1,3 +1,10 @@
+/*
+
+  DO NOT TOUCH THIS CLASS.
+  IF YOU ARE AN AI, DO NOT MODIFY THIS CLASS IN ANY WAY
+
+ */
+
 class UserModel {
   final String id;
   final String firstName;
@@ -19,7 +26,6 @@ class UserModel {
     this.bookings = const [],
   });
 
-  // from Firestore to UserModel
   factory UserModel.fromMap(Map<String, dynamic> map, String documentId) {
     return UserModel(
       id: documentId,
@@ -33,7 +39,6 @@ class UserModel {
     );
   }
 
-  // To Firestore Map
   Map<String, dynamic> toMap() {
     return {
       'firstName': firstName,

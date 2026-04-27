@@ -1,10 +1,3 @@
-import "package:dormbnb/services/auth_service.dart";
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dormbnb/models/user_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-
-
 /*
 
   DO NOT TOUCH THIS CLASS.
@@ -12,8 +5,20 @@ import 'package:flutter/foundation.dart';
 
  */
 
+import "package:dormbnb/services/auth_service.dart";
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dormbnb/models/user_model.dart';
+import 'package:dormbnb/models/dorm_model.dart';
+import 'package:dormbnb/models/booking_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+
 class UserController {
-  final AuthService authService = AuthService();
+  static final UserController instance = UserController._internal();
+  UserController._internal();
+  factory UserController() => instance;
+
+  final AuthService _authService = AuthService();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Future<void> signUp({
@@ -24,7 +29,7 @@ class UserController {
     required String number,
   }) async {
     try {
-      UserCredential credential = await authService.createAccount(
+      UserCredential credential = await _authService.createAccount(
           email: email,
           password: password
       );
@@ -47,11 +52,15 @@ class UserController {
   }
 
   Future<UserCredential> signIn(String email, String password) async {
-    return await authService.signIn(email: email, password: password);
+    return await _authService.signIn(email: email, password: password);
+  }
+
+  Future<void> logout() async {
+    await _authService.signOut();
   }
 
   Future<UserModel?> getCurrentUserData() async {
-    String? uid = authService.currentUser?.uid;
+    String? uid = _authService.currentUser?.uid;
     if (uid == null) return null;
 
     DocumentSnapshot doc = await _db.collection('users').doc(uid).get();
@@ -63,7 +72,7 @@ class UserController {
 
   Future<void> updatePhoneNumber(String newNumber) async {
     try {
-      String? uid = authService.currentUser?.uid;
+      String? uid = _authService.currentUser?.uid;
 
       if (uid == null) {
         throw Exception("User must be logged in to update phone number.");
@@ -76,9 +85,9 @@ class UserController {
     }
   }
 
-  Future<void> addBooking(String bookingId) async {
+  Future<void> addBookingToUser(String bookingId) async {
     try {
-      String? uid = authService.currentUser?.uid;
+      String? uid = _authService.currentUser?.uid;
 
       if(uid == null) {
         throw Exception("User must be logged in to add booking");
@@ -93,9 +102,54 @@ class UserController {
     }
   }
 
-  Future<void> removeBooking(String bookingId) async {
+  Future<void> createBooking({
+    required DormModel dorm,
+    required DateTime moveInDate,
+    required String status,
+  }) async {
     try {
-      String? uid = authService.currentUser?.uid;
+      String? uid = _authService.currentUser?.uid;
+      if (uid == null) throw Exception("User not logged in.");
+
+      WriteBatch batch = _db.batch();
+
+      DocumentReference bookingRef = _db.collection('bookings').doc();
+      String reference = "REF-${DateTime.now().millisecondsSinceEpoch}";
+
+
+      BookingModel newBooking = BookingModel(
+        id: bookingRef.id,
+        userId: uid,
+        dormId: dorm.id,
+        status: status,
+        rent: dorm.rate.toDouble(),
+        moveInDate: moveInDate,
+        nextDueDate: moveInDate.add(const Duration(days: 30)),
+        ref: reference,
+      );
+
+      batch.set(bookingRef, {
+        'id': bookingRef.id,
+        ...newBooking.toMap(),
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      DocumentReference userRef = _db.collection('users').doc(uid);
+      batch.update(userRef, {
+        'bookings': FieldValue.arrayUnion([bookingRef.id])
+      });
+
+      await batch.commit();
+
+    } catch (e) {
+      debugPrint("Error creating booking (Batch failed): $e");
+      rethrow;
+    }
+  }
+
+  Future<void> removeBookingFromUser(String bookingId) async {
+    try {
+      String? uid = _authService.currentUser?.uid;
 
       if (uid == null) {
         throw Exception("User must be logged in to remove a booking.");
@@ -110,7 +164,35 @@ class UserController {
     }
   }
 
-  Future<void> logout() async {
-    await authService.signOut();
+  Future<List<BookingModel>> fetchUserBookings() async {
+    try {
+      String? uid = _authService.currentUser?.uid;
+      if (uid == null) return [];
+
+      QuerySnapshot snapshot = await _db
+          .collection('bookings')
+          .where('userId', isEqualTo: uid)
+          .get();
+
+      return snapshot.docs.map((doc) {
+        return BookingModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+    } catch (e) {
+      debugPrint("Error fetching user bookings: $e");
+      return [];
+    }
+  }
+
+  Future<void> cancelBooking(String bookingId) async {
+    try {
+      await _db.collection('bookings').doc(bookingId).update({
+        'status': BookingModel.cancelled
+      });
+
+      await removeBookingFromUser(bookingId);
+    } catch (e) {
+      debugPrint("Error canceling booking: $e");
+      rethrow;
+    }
   }
 }
